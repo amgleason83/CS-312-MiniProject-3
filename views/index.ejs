@@ -10,39 +10,57 @@
   <main>
     <h1>My Blog</h1>
 
-    <form action="/posts" method="POST">
-      <label for="author">Your name</label>
-      <input type="text" id="author" name="author" required>
+    <% if (currentUserId) { %>
+      <p>Welcome, <%= currentUserName %>!</p>
 
-      <label for="title">Post title</label>
-      <input type="text" id="title" name="title" required>
+      <form action="/signout" method="POST">
+        <button type="submit">Sign Out</button>
+      </form>
 
-      <label for="content">Your post</label>
-      <textarea id="content" name="content" rows="6" required></textarea>
+      <form action="/posts" method="POST">
+        <label for="title">Post title</label>
+        <input type="text" id="title" name="title" required>
 
-      <button type="submit">Publish post</button>
-    </form>
+        <label for="content">Your post</label>
+        <textarea id="content" name="content" rows="6" required></textarea>
+
+        <button type="submit">Publish post</button>
+      </form>
+
+    <% } else { %>
+      <p>
+        <a href="/signin">Sign In</a> |
+        <a href="/signup">Sign Up</a>
+      </p>
+    <% } %>
+
     <section>
-        <h2>Posts</h2>
+      <h2>Posts</h2>
 
-        <% if (posts.length === 0) { %>
-            <p>No posts yet. Write the first one!</p>
-        <% } %>
+      <% if (posts.length === 0) { %>
+        <p>No posts yet. Write the first one!</p>
+      <% } %>
 
-        <% posts.forEach((post) => { %>
-            <article>
-            <h3><%= post.title %></h3>
-            <p>
-                By <%= post.author %>
-                · <%= post.createdAt.toLocaleString() %>
-            </p>
-            <p style="white-space: pre-wrap;"><%= post.content %></p>
+      <% posts.forEach((post) => { %>
+        <article>
+          <h3><%= post.title %></h3>
+
+          <p>
+            By <%= post.author %>
+            · <%= post.createdAt.toLocaleString() %>
+          </p>
+
+          <p style="white-space: pre-wrap;"><%= post.content %></p>
+
+          <% if (currentUserId === post.creator_user_id) { %>
             <a href="/posts/<%= post.id %>/edit">Edit</a>
+
             <form action="/posts/<%= post.id %>/delete" method="POST">
-                <button type="submit">Delete</button>
+              <button type="submit">Delete</button>
             </form>
-            </article>
-        <% }); %>
+          <% } %>
+        </article>
+      <% }); %>
     </section>
   </main>
 </body>
